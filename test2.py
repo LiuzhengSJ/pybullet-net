@@ -113,21 +113,23 @@ optimizer = torch.optim.Adam(cnn.parameters(), lr=LR)
 loss_func = nn.CrossEntropyLoss()  # 目标标签是one-hotted
 
 # 开始训练
-# for epoch in range(EPOCH):
-#     for step, (b_x, b_y) in enumerate(train_loader):  # 分配batch data
-#         output = cnn(b_x)  # 先将数据放到cnn中计算output
-#         loss = loss_func(output, b_y)  # 输出和真实标签的loss，二者位置不可颠倒
-#         optimizer.zero_grad()  # 清除之前学到的梯度的参数
-#         loss.backward()  # 反向传播，计算梯度
-#         optimizer.step()  # 应用梯度
-#
-#         if step % 50 == 0:
-#             test_output = cnn(test_x)
-#             pred_y = torch.max(test_output, 1)[1].data.numpy()
-#             accuracy = float((pred_y == test_y.data.numpy()).astype(int).sum()) / float(test_y.size(0))
-#             print('Epoch: ', epoch, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy)
-#
-# torch.save(cnn.state_dict(), 'cnn2.pkl')#保存模型
+trainEn = 1
+if trainEn:
+    for epoch in range(EPOCH):
+        for step, (b_x, b_y) in enumerate(train_loader):  # 分配batch data
+            output = cnn(b_x)  # 先将数据放到cnn中计算output
+            loss = loss_func(output, b_y)  # 输出和真实标签的loss，二者位置不可颠倒
+            optimizer.zero_grad()  # 清除之前学到的梯度的参数
+            loss.backward()  # 反向传播，计算梯度
+            optimizer.step()  # 应用梯度
+    
+            if step % 50 == 0:
+                test_output = cnn(test_x)
+                pred_y = torch.max(test_output, 1)[1].data.numpy()
+                accuracy = float((pred_y == test_y.data.numpy()).astype(int).sum()) / float(test_y.size(0))
+                print('Epoch: ', epoch, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy)
+    
+    torch.save(cnn.state_dict(), 'cnn2.pkl')#保存模型
 
 # 加载模型，调用时需将前面训练及保存模型的代码注释掉，否则会再训练一遍
 cnn.load_state_dict(torch.load('cnn2.pkl'))
